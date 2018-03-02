@@ -1,11 +1,20 @@
 {
   "name": "vue2any",
   "version": "0.1.0",
-  "author": "MeituFE - Surmon",
   "private": true,
-  "license": "ISC",
-  "description": "Transfer vue file to any language code.",
+  "license": "MIT",
+  "description": "Transfer vue file to any language code",
   "main": "src/index.js",
+  "author": {
+    "name": "Surmon",
+    "email": "surmon@foxmail.com",
+    "url": "http://surmon.me"
+  },
+  "keywords": [
+    "vue transfer",
+    "vue php ssr",
+    "vue ssr",
+  ],
   "scripts": {
     "debug": "nodemon --harmony --inspect=0.0.0.0:5858 ./test/dev.js",
     "dev": "devtool ./test/dev.js --js-flags=\"--harmony --inspect\" --watch",
