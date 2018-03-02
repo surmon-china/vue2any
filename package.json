@@ -1,0 +1,43 @@
+{
+  "name": "vue-to-any",
+  "version": "0.1.0",
+  "author": "MeituFE - Surmon",
+  "private": true,
+  "license": "ISC",
+  "description": "Transfer vue file to any language code.",
+  "main": "dist/vue-to-any.min.js",
+  "scripts": {
+    "dev": "devtool ./test/dev.js --js-flags=\"--harmony --inspect\" --watch",
+    "build": "cross-env NODE_ENV=production browserify -x prettydiff2  -x fs-extra -e src/index.js -s VueToAny -o dist/vue-to-any.js -d -t [ babelify --presets [ es2015 ] ] --no-builtins --bare && uglifyjs dist/vue-to-any.js --source-map -o dist/vue-to-any.min.js",
+    "build:babel": "babel ./src/index.js --out-file ./dist/vue-to-any.js --source-maps",
+    "test": "node ./test/test.js"
+  },
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
+    "core-js": "^2.5.0",
+    "electron": "^1.7.5",
+    "escodegen": "^1.8.1",
+    "esprima": "^4.0.0",
+    "estraverse": "^4.2.0",
+    "fs-extra": "^4.0.1",
+    "get-parameter-names": "^0.3.0",
+    "prettydiff2": "^2.2.7",
+    "serialize-javascript": "^1.4.0",
+    "vue": "^2.4.2",
+    "vue-template-compiler": "^2.4.2"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-decorators": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-plugin-transform-es2015-modules-simple-commonjs": "^0.3.0",
+    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "babelify": "^7.3.0",
+    "cross-env": "^5.0.5",
+    "devtool": "^2.3.1",
+    "uglify-js": "^3.0.28"
+  }
+}
