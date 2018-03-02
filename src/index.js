@@ -104,7 +104,10 @@ class VueToAny {
       // 如果由于字符串被内存复制，则这里改为一个 实例 + 文件内容 对象来做参数
       if (this.middlewares.after.length) {
         this.middlewares.after.forEach(middleware => {
-          middleware.bind(this)(result)
+          const _result = middleware.bind(this)(result)
+          if (_result !== undefined) {
+            result = _result
+          }
         })
       }
       // console.debug('执行输出')

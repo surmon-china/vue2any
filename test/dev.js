@@ -6,13 +6,16 @@ const VueToAny = require('../src')
 const vueToAny = new VueToAny({
 	debug: true,
 	progress: true,
-	entryFile: path.join(__dirname, '../../../', '/src/pc/pages/index/', 'page.vue'),
-	outFile: path.join(__dirname, '../../../', '/src/pc/pages/index/', 'page.php')
-	// entryFile: path.join(__dirname, '/vue/', 'Test.vue'),
-  // outFile: path.join(__dirname, '/out/', 'test.php')
+	entryFile: path.join(__dirname, '../../../', '/src/mobile/pages/user-x/', 'page.vue'),
+	outFile: path.join(__dirname, '../../../', '/src/mobile/pages/user-x/', 'page.php')
+	// entryFile: path.join(__dirname, '/vue/', 'Dev.vue'),
+  // outFile: path.join(__dirname, '/out/', 'dev.php')
 })
 
+console.clear()
 console.log(vueToAny)
 
 // 执行转换输出转换
 vueToAny.generate()
+
+setTimeout(() => {}, 10000000)

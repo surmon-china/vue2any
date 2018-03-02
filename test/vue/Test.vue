@@ -1,47 +1,56 @@
 <template>
   <div id="app" class="app" :class="appclass" :show="show + '123213'">
 
+    <!-- 测试一个复杂的 -->
+    <div v-if="PHPDATA.test.test">
+      <!-- <p你说会有hello吗></p> -->
+      <hello :attrs="PHPDATA.attrs">
+        <div class="sss">你好 {{ PHPDATA.test }}</div>
+      </hello>
+    </div>
+    <p v-else>haola</p>
+
+    <!-- <hello v-if="PHPDATA.hello.test"></hello> -->
+    <!-- <div v-else>213123123</div> -->
+
     <!-- 基本测试 -->
-    <!-- <img class="local-img" src="./assets/logo.png"> -->
-    <!-- <img class="component-img" :src="img.src"> -->
-    <!-- <img class="php-img" :src="PHPDATA.img.src" :alt="PHPDATA.img.alt"> -->
-    <!-- <div class="php-class" :id="PHPDATA.div.id" :title="title"></div> -->
+    <img class="local-img" src="./assets/logo.png">
+    <img class="component-img" :src="img.src">
+    <img class="php-img" :src="PHPDATA.img.src" :alt="PHPDATA.img.alt">
+    <div class="php-class" :id="PHPDATA.div.id" :title="title"></div>
 
     <!-- 渲染逻辑 -->
- <!--    <p class="component-v-if" v-if="!isShow">{{ name }}</p>
+    <p class="component-v-if" v-if="!isShow">{{ name }}</p>
+    <p class="component-v-else-if" v-else-if="show2">{{ name + '213123' }}</p>
+    <p class="component-v-else-if" v-else-if="show1">show1</p>
+    <p class="component-v-else" v-else>else else</p>
+    <p class="php-v-if" v-if="PHPDATA.tab === 1">{{ PHPDATA.name }}</p>
+    <p class="php-v-else" v-else-if="PHPDATA.showtab">{{ name + '213123' }}</p>
+    <p v-else>else hahah</p>
+    <div v-if="!PHPDATA.style.if">我是测试服务端的 v-if</div>
+    <div v-else>我是测试服务端的 v-else</div>
+    <p class="component-v-if" v-if="isShow">{{ name }}</p>
     <p class="component-v-else-if" v-else-if="show2">{{ name + '213123' }}</p>
     <p class="component-v-else-if" v-else-if="show1">show1</p>
     <p class="component-v-else" v-else>else else</p>
 
-    <p class="php-v-if" v-if="PHPDATA.tab === 1">{{ PHPDATA.name }}</p>
-    <p class="php-v-else" v-else-if="PHPDATA.showtab">{{ name + '213123' }}</p>
-    <p v-else>else hahah</p>
-
-    <div v-if="!PHPDATA.style.if">我是测试服务端的 v-if</div>
-    <div v-else>我是测试服务端的 v-else</div>
-
-    <p class="component-v-if" v-if="isShow">{{ name }}</p>
-    <p class="component-v-else-if" v-else-if="show2">{{ name + '213123' }}</p>
-    <p class="component-v-else-if" v-else-if="show1">show1</p>
-    <p class="component-v-else" v-else>else else</p> -->
-
     <!-- class - object -->
-<!--     <div class="test-class-object" 
+    <div class="test-class-object" 
          :class="{ 
           'hover': show,
           disabled: !PHPDATA.disabled,
           active: PHPDATA.active
-        }">php - class - object</div> -->
+        }">php - class - object</div>
 
     <!-- class - array -->
-<!--     <div class="test-class-array" :class="[
+    <div class="test-class-array" :class="[
       !PHPDATA.active ? 'active' : 'noactive', 
       show ? 'gogoshow' : '',
       'class-test'
-    ]">php - class - array</div>   -->
+    ]">php - class - array</div>  
 
     <!-- style -->
-<!--     <div class="component-v-show" 
+    <div class="component-v-show" 
            v-show="isShow" 
            :style="{ 
             'active': show,
@@ -60,23 +69,22 @@
            :style="{ 
               visible: !PHPDATA.style.visible,
               backgroundColor: PHPDATA.bg.color
-            }">我是测试服务端的style</div> -->
+            }">我是测试服务端的style</div>
 
     <!-- 数据输出 -->
-<!--     <p class="php-name" v-text="PHPDATA.name.text"></p>
+    <p class="php-name" v-text="PHPDATA.name.text"></p>
     <p class="component-name" v-text="name"></p>
     <div class="php-content" v-html="PHPDATA.article.content"></div>
     <div class="component-content" v-html="content"></div>
-    <div class="mt-content">{{ content }}</div> -->
+    <div class="mt-content">{{ content }}</div>
 
     <!-- 数据绑定 -->
-<!--     <input type="text" v-model="PHPDATA.name.model">
+    <input type="text" v-model="PHPDATA.name.model">
     <input type="number" :value="PHPDATA.number.model">
-    <textarea :value="PHPDATA.textarea" id="" cols="30" rows="10"></textarea> -->
-
+    <textarea :value="PHPDATA.textarea" id="" cols="30" rows="10"></textarea>
 
     <!-- 列表渲染 -->
-<!--     <ul>
+    <ul>
       <li class="item" v-for="(item, key) in PHPDATA.arr">
         <div class="item-attr">{{ item.abc }} 12313</div>
         <span class="item-class" 
@@ -87,23 +95,23 @@
         <span>{{ content }}</span>
         <span>我是辣子父组件的name属性{{ name }}</span>
       </li>
-    </ul> -->
+    </ul>
 
     <!-- 列表乱套 -->
-<!--     <div class="media-list">
+    <div class="media-list">
       <div v-for="(item, index) in PHPDATA.media.list">
         <a :href="item.link" :class="{ first: item === 0 }">
           <img :src="item.thumb">
           <span>{{ item.name }}</span>
         </a>
         <div>我要嵌套循环了</div>
-        第一层套
+        <!-- 第一层套 -->
         <div v-for="children in item.abc">
           <span>{{ name }}</span>
           <span>{{ children.name }}</span>
           <cdc></cdc>
           <span>fuckfuckfuck</span>
-          第二层套
+          <!-- 第二层套 -->
           <div v-for="child in children.child">
             <span>{{ child.content }}</span>
             <span>{{ content }}</span>
@@ -113,20 +121,20 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     
     <!-- 自定义组件和 slot -->
-    <!-- <hello> -->
-      <!-- <span>hello？？？ 23123</span> -->
+    <hello>
+      <span>hello？？？ 23123</span>
       <!-- <div v-for="item in 10">{{ item }}</div> -->
       <!-- <slot>i am slot</slot> -->
-    <!-- </hello> -->
+    </hello>
 
     <!-- 一个全局组件，这个组件的路径需要配置在自定义block-config中 -->
-    <!-- <global></global> -->
+    <global></global>
 
     <!-- 乱七八糟的自定义组件 -->
-<!--     <abc :title="PHPDATA.num" 
+    <abc :title="PHPDATA.num" 
          :thumbs="PHPDATA.thumbs"
          :title="PHPDATA.title" 
          :hahaha="'lkwhflwehrwh'"
@@ -137,15 +145,13 @@
       <p>{{ name }}</p>
       <cdc></cdc>
       <p slot="hello">怎么还是？？？</p>
-    </abc> -->
+    </abc>
 
-    <hello></hello>
-
-    <!-- <acc></acc> -->
-    <!-- <cdc></cdc> -->
+    <acc></acc>
+    <cdc></cdc>
 
     <!-- 一个普通的列表 -->
-<!--     <ul>
+    <ul>
       <li class="item" v-for="(item, key) in PHPDATA.arr">
         <div class="item-attr">{{ item.abc }} 12313</div>
         <span class="item-class" 
@@ -154,32 +160,32 @@
         <span>{{ key }}</span>
         <cdc></cdc>
       </li>
-    </ul> -->
+    </ul>
 
     <!-- 组件列表 -->
- <!--    <div class="component-list">
+    <div class="component-list">
       <hello v-for="item in PHPDATA.his" :item="item.items">
         <div>我是插入hello的自定义插槽 {{ content }}</div>
       </hello>
-    </div> -->
+    </div>
 
     <!-- 一些内置组件 -->
- <!--    <keep-alive>
+    <keep-alive>
       <cdc></cdc>
-    </keep-alive> -->
+    </keep-alive>
 
     <!-- 动画组件 -->
- <!--    <transition>
+    <transition>
       <span>transition</span>
-    </transition> -->
+    </transition>
 
     <!-- 动画组组件 -->
- <!--    <transition-group tag="ul" class="local-transition-group" name="slide">
+    <transition-group tag="ul" class="local-transition-group" name="slide">
       <li v-for="item in 10" :key="item">local-transition-group{{ item }}</li>
-    </transition-group> -->
+    </transition-group>
 
     <!-- 动画组乱套 -->
-<!--     <transition-group tag="ul" class="php-transition-group" name="slide">
+    <transition-group tag="ul" class="php-transition-group" name="slide">
       <div v-for="item in PHPDATA.array" :key="item" trnasfer="group">
         <span>{{ item }}</span>
         <cdc></cdc>
@@ -188,7 +194,7 @@
           <span>666666</span>
         </div>
       </div>
-    </transition-group> -->
+    </transition-group>
   </div>
 </template>
 
@@ -212,7 +218,7 @@
   export default {
     name: 'app',
     components: {
-      Hello,
+      // Hello,
       // hello: {
       //   template: '<div>hello</div>'
       // },

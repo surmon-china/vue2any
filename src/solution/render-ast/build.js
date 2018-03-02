@@ -282,6 +282,13 @@ var ESC = {
   '&': '&amp;'
 };
 
+ESC = {
+  '<': '<',
+  '>': '>',
+  '"': '"',
+  '&': '&'
+};
+
 function escape (s) {
   return s.replace(/[<>"&]/g, escapeChar)
 }
@@ -1614,6 +1621,8 @@ function validateProp (
   if (process.env.NODE_ENV !== 'production') {
     assertProp(prop, key, value, vm, absent);
   }
+
+  // console.warn('--------validateProp', value)
   return value
 }
 
@@ -1621,6 +1630,7 @@ function validateProp (
  * Get the default value of a prop.
  */
 function getPropDefaultValue (vm, prop, key) {
+  // console.warn('--------getPropDefaultValue', prop)
   // no default, return undefined
   if (!hasOwn(prop, 'default')) {
     return undefined
@@ -1701,6 +1711,7 @@ function assertProp (
       );
     }
   }
+  // console.warn('-------------断言？？？？', prop)
 }
 
 var simpleCheckRE = /^(String|Number|Boolean|Function|Symbol)$/;
@@ -6815,7 +6826,9 @@ function createComponentInstanceForVnode (
     options.render = inlineTemplate.render;
     options.staticRenderFns = inlineTemplate.staticRenderFns;
   }
-  return new vnodeComponentOptions.Ctor(options)
+  const newCom = new vnodeComponentOptions.Ctor(options)
+  // console.warn('-----------createComponentInstanceForVnode', newCom)
+  return newCom 
 }
 
 function mergeHooks (data) {
@@ -6879,20 +6892,28 @@ var normalizeRender = function (vm) {
 };
 
 function renderNode (node, isRoot, context) {
+  // console.debug('---------------------------renderNode', isRoot, node)
   if (node.isString) {
+    // console.debug('---------------------------1')
     renderStringNode(node, context);
   } else if (isDef(node.componentOptions)) {
+    // console.debug('---------------------------2')
     renderComponent(node, isRoot, context);
   } else if (isDef(node.tag)) {
+    // console.debug('---------------------------3')
     renderElement(node, isRoot, context);
   } else if (isTrue(node.isComment)) {
+    // console.debug('---------------------------4')
     if (isDef(node.asyncFactory)) {
       // async component
+      // console.debug('---------------------------5')
       renderAsyncComponent(node, isRoot, context);
     } else {
+      // console.debug('---------------------------6')
       context.write(("<!--" + (node.text) + "-->"), context.next);
     }
   } else {
+    // console.debug('---------------------------7')
     context.write(
       node.raw ? node.text : escape(String(node.text)),
       context.next
@@ -6996,12 +7017,14 @@ function renderComponentInner (node, isRoot, context) {
     context.activeInstance
   );
   normalizeRender(child);
+  // console.warn('------------renderNode---1', child)
   var childNode = child._render();
   childNode.parent = node;
   context.renderStates.push({
     type: 'Component',
     prevActive: prevActive
   });
+  // console.warn('------------renderNode---2', childNode)
   renderNode(childNode, isRoot, context);
 }
 
@@ -7641,11 +7664,15 @@ function createRenderer$1 (ref) {
       }
       var result = '';
       var write = createWriteFunction(function (text) {
+        text = text.replace(/&lt;\?php/g, '<?php')
+        text = text.replace(/\?&gt;/g, '?>')
         result += text;
         return false
       }, done);
       try {
+        // console.warn('-----------走到render了', template, result)
         render(component, write, context, function () {
+          // console.warn('------------template', template, result);
           if (template) {
             result = templateRenderer.renderSync(result, context);
           }
@@ -8061,8 +8088,10 @@ function renderSSRStyle (staticStyle, dynamic, extra) {
 
 // 节点渲染
 const _renderStringNode$1 = (open, close, children, normalizationType) => {
-  // console.log('节点渲染', open, close, children, normalizationType)
-  return renderStringNode$1(open, close, children, normalizationType)
+  // console.log('-------节点渲染1', open, close, children, normalizationType)
+  const result = renderStringNode$1(open, close, children, normalizationType)
+  // console.log('-------节点渲染2', result)
+  return result
 }
 
 // 样式渲染
@@ -8078,7 +8107,7 @@ const _renderSSRClass = (staticClass, dynamic) => {
 
 // 字符串转义
 const _escape = s => {
-  // console.log('sssssssssssssssss', s, instance.transfer.validate(s))
+  // console.log('---------------_escape', s, instance.transfer.validate(s))
   if (instance.transfer.validate(s)) {
     // 如果要解析目标语言语句，则是需要过滤或不过滤
     s = instance.transfer.echoStripTagsFromEcho(s)
@@ -8100,9 +8129,7 @@ const _renderAttr = (key, value) => {
 
 // 列表渲染
 const _renderStringList = (list, render) => {
-
-  // console.warn('---------走到build', list, render)
-
+  // console.warn('列表渲染, ---------走到build', list, render)
   // 如果所循环数据为目标语言，则输出目标语言
   if (instance.transfer.validate(list)) {
     // console.warn('该转？？？', list, render)

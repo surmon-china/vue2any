@@ -1,6 +1,16 @@
 <template>
   <div id="app" class="app" :class="appclass" :show="show + '123213'">
 
+    <!-- 测试一个复杂的 -->
+    <div v-if="PHPDATA.test.test">
+      <!-- <p你说会有hello吗></p> -->
+      <hello></hello>
+    </div>
+    <p v-else>haola</p>
+
+    <hello v-if="PHPDATA.hello.test"></hello>
+    <div v-else>213123123</div>
+
     <!-- 基本测试 -->
     <img class="local-img" src="./assets/logo.png">
     <img class="component-img" :src="img.src">

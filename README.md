@@ -1,4 +1,4 @@
-# vue-to-any
+# vue2any
 Transfer vue file to any language code.
 
 ## 解决方案
@@ -228,8 +228,6 @@ npm run test
 
 ```
 nuxt.js-blog/
-   |
-   ├──dist/                    * 产出的 UMD 模块生产文件
    |
    ├──src/                     * 主程序
    │   │

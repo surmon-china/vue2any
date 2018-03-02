@@ -1,4 +1,19 @@
-<div id="app" show="true123213" class="app aaa"><img src="./assets/logo.png" class="local-img">
+<div id="app" show="true123213" class="app aaa"><?php if($PHPDATA['test']['test']): ?>
+	<div>
+		<div>
+			<div>i'm hello</div>
+			<p></p>
+		</div>
+	</div>
+<?php else: ?>
+	<p>haola</p><?php endif; ?>
+	<?php if($PHPDATA['hello']['test']): ?>
+	<div>
+		<div>i'm hello</div>
+		<p></p>
+	</div>
+<?php else: ?><?php endif; ?>
+	<img src="./assets/logo.png" class="local-img">
 	<img src="../../../xxx.jpg" class="component-img">
 	<img src="<?php echo $PHPDATA['img']['src']; ?>" alt="<?php echo $PHPDATA['img']['alt']; ?>" class="php-img">
 	<div id="<?php echo $PHPDATA['div']['id']; ?>" title="i am title" class="php-class"></div>
@@ -45,7 +60,6 @@
 			<div>
 				<span>i am component name</span>
 				<span><?php echo strip_tags($children['name']); ?></span>
-				<div>cdc</div>
 				<?php foreach ($children['child'] as $child):?>
 				<div>
 					<span><?php echo strip_tags($child['content']); ?></span>
@@ -54,7 +68,7 @@
 		<div>
 			<div>i'm hello</div>
 			<div>我是插入hello的自定义插槽 i am component content</div>
-			<p><?php echo $item['xxx']['name']; ?></p>
+			<p><?php echo strip_tags($item['xxx']['name']); ?></p>
 		</div><?php endforeach; ?></div>
 	<div>
 		<div>i'm hello</div>
@@ -78,26 +92,15 @@
 			<?php echo $PHPDATA['imgsrc']; ?></div>
 	</div>
 <?php if($PHPDATA['ifelse']): ?>
-	<div hahaha="lkwhflwehrwh" class="component-data">
-		你好呀 哈哈
-		<?php echo $PHPDATA['content']['title']['abc']; ?>
-		<?php echo $PHPDATA['thumbs']['abs']['xxx']; ?>
-		<span>23</span>
-		<p><?php echo $PHPDATA['name']; ?></p>
-		<p>i am component name</p>
-		<div>cdc</div>
-	</div>
 <?php else: ?><?php endif; ?>
-	<div>cdc</div>
 	<ul><?php foreach ($PHPDATA['arr'] as $key => $item):?>
 		<li class="item">
 			<div class="item-attr"><?php echo strip_tags($item['abc']); ?>
 				12313</div>
 			<span class="item-class <?php echo $item['show'] ? 'show' : ''; ?>" style="background-color:<?php echo $item['background']['color']; ?>;"><?php echo strip_tags($item['name']['aaa']['bbb']); ?></span>
 			<span><?php echo strip_tags($key); ?></span>
-			<div>cdc</div>
 		</li><?php endforeach; ?></ul>
-	<div>cdc</div>
+	<!---->
 	<span>transition</span>
 	<ul class="local-transition-group">
 		<li>local-transition-group1</li>
@@ -115,7 +118,7 @@
 		<?php foreach ($PHPDATA['array'] as $item):?>
 		<div trnasfer="group">
 			<span><?php echo $item; ?></span>
-			<div>cdc</div>
+			<cdc></cdc>
 			<?php foreach ($item['children'] as $child):?>
 			<div>
 				<?php echo $child['index']; ?>

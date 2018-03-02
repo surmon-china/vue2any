@@ -9,12 +9,22 @@ const getParameterNames = require('get-parameter-names')
 let context = null
 let options = null
 let transfer = null
-let isNeedTransferToServerData = (expression, keyword) => {
-  // console.log('keyword', keyword, 'expression', expression)
+let isNeedTransferToServerData = (expression, keyword, notCheckEx) => {
+  // console.warn('--------------------------keyword', keyword, 'expression', expression, keyword)
+  if (!notCheckEx) {
+    if (context.transfer.validate(expression)) {
+      return false
+    }
+  }
+  keyword = (keyword || context.options.variable)
   if (typeof keyword === 'string') {
-    return expression.includes((keyword || context.options.variable)) && !context.transfer.validate(expression)
+    return (expression.startsWith(keyword) || 
+            expression.startsWith(!`${keyword}`) || 
+            expression.startsWith('!PHPDATA.') ||
+            expression.startsWith('PHPDATA.'))
   } else if (keyword instanceof Array) {
-    return keyword.some(kw => expression.includes(kw) && !context.transfer.validate(expression))
+    if (!keyword.includes('PHPDATA')) keyword.push('PHPDATA')
+    return keyword.some(kw => (expression.startsWith(kw) || expression.startsWith(`!${kw}`)))
   }
 }
 
@@ -61,8 +71,9 @@ const parseListData = function (node, parent, vm, keyword, prefix) {
     const listDataCode = escodegen.generate(listNode.arguments[0])
     const listRenderCode = escodegen.generate(listNode.arguments[1])
     const listRenderParams = getParameterNames(listRenderCode)
-    // console.warn('处理这个列表中', listDataCode, listRenderParams, listRenderCode)
-    listRender = vtaGenerate.parseAst.bind(instance)(listRender, vm, listRenderParams)
+    const kws = Array.from(new Set(listRenderParams.concat(keyword)))
+    // console.warn('---------------处理这个列表中', listDataCode, kws, prefix)
+    listRender = vtaGenerate.parseAst.bind(instance)(listRender, vm, kws, prefix)
     if (!instance.transfer.validate(listData)) {
       const targetCode = instance.transfer.echoData(listDataCode, prefix)
       // console.warn('这个参数转一下', listDataCode, targetCode, listData)
@@ -109,11 +120,13 @@ const ConditionalExpression = function(node, parent, vm, keyword, prefix) {
   const expressionCode = escodegen.generate(node)
   const condition = escodegen.generate(node.test)
   // 如果来自于服务端，则处理
+  // console.warn('---------------------解析条件表达式 来自服务端', expressionCode, condition)
   if (isNeedTransferToServerData(condition, keyword)) {
-    // console.debug('解析条件表达式 来自服务端', expressionCode, parent)
     // 如果是解析组件的判断句，则用逗号分隔
     let stitching = ''
-    if (escodegen.generate(node.consequent).startsWith('_c')) {
+    if (escodegen.generate(node.consequent).startsWith('_c') ||
+        // escodegen.generate(node.consequent).startsWith('_v') || 
+        escodegen.generate(node.consequent).startsWith('_ssrNode')) {
       stitching = ','
     } else {
       stitching = '+'
@@ -123,12 +136,9 @@ const ConditionalExpression = function(node, parent, vm, keyword, prefix) {
     const parseTernaryOperatorAst = (node, elseif) => {
       const consequent = escodegen.generate(node.consequent)
       const alternate = escodegen.generate(node.alternate)
-      let testCode = escodegen.generate(node.test)
-      testCode = transfer.transferExpression(testCode)
-      testCode.left = transfer.accessObject(testCode.left)
-      if (testCode.right && testCode.right.includes(keyword)) {
-        testCode.right = transfer.accessObject(testCode.right)
-      }
+      const _testCode = escodegen.generate(node.test)
+      const testCode = transfer.transferExpression(node, _testCode, keyword, prefix)
+      // console.warn('----------------------testCode', _testCode, ' - ', testCode, keyword, prefix)
       targetExpression += `"${transfer.condition[elseif ? 'elseif' : 'if'](testCode)}"${stitching}`
       targetExpression += `${consequent}${stitching}`
       if (node.alternate.type === 'ConditionalExpression') {
@@ -140,10 +150,12 @@ const ConditionalExpression = function(node, parent, vm, keyword, prefix) {
       }
     }
     parseTernaryOperatorAst(node, false)
+    // console.warn('---------------------解析条件表达式 来自服务端2', targetExpression)
     const targetAst = esprima.parse(targetExpression, { sourceType: 'script' })
-    // console.warn('targetExpression', targetExpression, targetAst)
+    // console.warn('---------------------targetExpression', targetExpression, targetAst.body, '\n')
     return targetAst
   }
+  return node
 }
 
 // 解析函数表达式
@@ -169,8 +181,8 @@ function CallExpression (node, parent, vm, keyword, prefix) {
 
 // 解析成员表达式
 function MemberExpression (node, parent, vm, keyword, prefix) {
-  const nodeCode =  escodegen.generate(node)
-  // console.log('解析成员表达式', node, nodeCode)
+  const nodeCode = escodegen.generate(node)
+  // console.log('------------解析成员表达式', nodeCode, node, keyword)
   if (isNeedTransferToServerData(nodeCode, keyword)) {
     const targetCode = transfer.echoData(nodeCode, prefix)
     // console.debug('成功解析成员表达式', node, nodeCode, targetCode, prefix)
@@ -184,40 +196,20 @@ function MemberExpression (node, parent, vm, keyword, prefix) {
 
 // 解析一元表达式
 const UnaryExpression = function(node, parent, vm, keyword, prefix) {
-  const nodeCode =  escodegen.generate(node)
-  // console.log('解析一元表达式', node, nodeCode)
+  const nodeCode = escodegen.generate(node)
+  const _nodeCode = escodegen.generate(node.argument)
   if (node.prefix && node.operator === '!') {
-    const targetCode = transfer.echoData(nodeCode, prefix)
+    // console.log('----------解析一元表达式', _nodeCode, keyword, node, parent)
+    // if (isNeedTransferToServerData(_nodeCode, keyword, true)) {
     if (isNeedTransferToServerData(nodeCode, keyword)) {
-      return {
+      const targetCode = transfer.echoData(nodeCode, prefix)
+      // console.debug('----------成功解析一元表达式', targetCode)
+      node = {
         name: `"${targetCode}"`,
         type: 'Identifier'
       }
     }
   }
-  return node
-}
-
-// 解析对象表达式
-const ObjectExpression = function(node, parent, vm, keyword, prefix) {
-  const nodeCode =  escodegen.generate(node)
-  // console.log('解析对象表达式', node, nodeCode, parent)
-  // if (parent.callee.name === '_ssrClass') {
-  //   console.log('来自 _ssrClass 绑定的 Object', nodeCode)
-  //   // 分析属性的值，如果来自服务端，则转换为字符串三目，否则是 js 三目
-  //   const properties = node.properties
-  //   node.properties.forEach((propertie, i) => {
-  //     const valueCode = escodegen.generate(propertie.value)
-  //     const className = escodegen.generate(propertie.key)
-  //     console.log(valueCode, className)
-  //     // 来自服务端
-  //     if (isNeedTransferToServerData(valueCode)) {
-  //       console.log(transfer.echoConditionalOperator(valueCode, className))
-  //     } else {
-
-  //     }
-  //   })
-  // }
   return node
 }
 
@@ -251,7 +243,6 @@ module.exports = function(_context) {
     CallExpression,
     UnaryExpression,
     MemberExpression,
-    ObjectExpression,
     ConditionalExpression
   }
 }
