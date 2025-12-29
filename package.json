@@ -5,15 +5,11 @@
   "license": "MIT",
   "description": "Transfer vue file to any language code",
   "main": "src/index.js",
-  "author": {
-    "name": "Surmon",
-    "email": "surmon@foxmail.com",
-    "url": "http://surmon.me"
-  },
+  "author": "Surmon",
   "keywords": [
     "vue transfer",
     "vue php ssr",
-    "vue ssr",
+    "vue ssr"
   ],
   "scripts": {
     "debug": "nodemon --harmony --inspect=0.0.0.0:5858 ./test/dev.js",
